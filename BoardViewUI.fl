@@ -1,0 +1,501 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0405
+header_name {.h}
+code_name {.cxx}
+class BoardViewUI {open
+} {
+  Function {BoardViewUI()} {open
+  } {
+    Fl_Window mainWindow {
+      label {Chesspresso V1.0} open
+      private xywh {582 255 929 710} type Double box UP_BOX labelsize 12 resizable visible
+    } {
+      Fl_Group {} {open
+        xywh {0 0 929 709}
+      } {
+        Fl_Group ViewChange {
+          label {Just for fun ..} open
+          xywh {649 368 274 96} box UP_BOX labelsize 12 align 21 hide
+        } {
+          Fl_Roller vrot {
+            label {V Rot}
+            callback {cube->v_angle(((Fl_Roller *)o)->value());
+cube->redraw();}
+            xywh {893 368 20 92} labeltype NO_LABEL labelsize 12 align 128 minimum -180 maximum 180 step 1
+            code0 {\#include <stdio.h>}
+          }
+          Fl_Slider ypan {
+            label {V Pan}
+            callback {cube->pany(((Fl_Slider *)o)->value());
+cube->redraw();}
+            xywh {659 384 14 52} type {Vert Knob} selection_color 136 labeltype NO_LABEL labelsize 12 align 0 minimum -25 maximum 25 step 0.1 hide deactivate
+          }
+          Fl_Roller hrot {
+            label {H Rotation}
+            callback {cube->h_angle(((Fl_Roller *)o)->value());
+cube->redraw();}
+            xywh {819 394 70 32} type Horizontal labeltype NO_LABEL labelsize 12 align 8 minimum -180 maximum 180 step 1
+          }
+          Fl_Value_Slider zoom {
+            label Zoom
+            callback {cube->size=((Fl_Value_Slider *)o)->value();
+cube->redraw();}
+            xywh {762 374 20 76} type {Vert Knob} selection_color 136 labelfont 1 labelsize 12 minimum 0.6 maximum 1.5 step 0.05 value 1 textfont 1
+          }
+          Fl_Slider xpan {
+            label alpha_1
+            callback {cube->panx(((Fl_Slider *)o)->value());
+cube->redraw();}
+            xywh {660 443 30 12} type {Horz Knob} selection_color 136 labeltype NO_LABEL labelsize 12 align 16 step 0.01 value 0.65 hide deactivate
+          }
+          Fl_Button {} {
+            label Reset
+            callback {vrot->value(0.0);
+cube->v_angle(((Fl_Roller *)o)->value(0.0));
+hrot->value(0.0);
+cube->h_angle(((Fl_Roller *)o)->value(0.0));
+zoom->value(1.0);
+cube->size= 1.0;
+
+cube->redraw();}
+            xywh {681 408 64 22}
+          }
+          Fl_Button {} {
+            label hide
+            callback {// reset all and hide control
+vrot->value(0.0);
+cube->v_angle(((Fl_Roller *)o)->value(0.0));
+hrot->value(0.0);
+cube->h_angle(((Fl_Roller *)o)->value(0.0));
+zoom->value(1.0);
+cube->size= 1.0;
+ViewChange->hide();}
+            xywh {681 438 64 22}
+          }
+        }
+        Fl_Group MainView {open
+          xywh {15 45 630 630} box DOWN_BOX
+        } {
+          Fl_Box cube {
+            label {This is the board_view}
+            xywh {15 45 630 630} align 16 resizable
+            code0 {\#include "BoardView.h"}
+            class BoardView
+          }
+        }
+        Fl_Button {} {
+          label {Quick exit}
+          callback {void freeHashesAndOpenings();
+
+freeHashesAndOpenings();
+exit(0);}
+          xywh {838 3 85 22}
+          code0 {\#include <cstdlib>}
+          code1 {\#include <FL/fl_ask.H>}
+        }
+        Fl_Menu_Button {} {
+          label {&Game} open
+          xywh {15 6 70 32}
+        } {
+          MenuItem {} {
+            label {&Takeback}
+            callback {void TakeBackMove();
+TakeBackMove();
+cube->redraw();}
+            xywh {0 0 100 20}
+          }
+          MenuItem bookOff_mi {
+            label {&Book openings off}
+            callback {void setOpeningsOff();
+setOpeningsOff();
+bookOff_mi->deactivate();
+cube->redraw();}
+            xywh {0 0 100 20}
+          }
+          MenuItem {} {
+            label about
+            callback {void aboutMessage();
+// put in the proto ortho view here, just for fun
+ViewChange->show();
+
+aboutMessage();}
+            xywh {0 0 100 20}
+          }
+          MenuItem {} {
+            label acknowledgements
+            callback {void acknowlMessage();
+acknowlMessage();}
+            xywh {0 0 100 20} divider
+          }
+          MenuItem {} {
+            label {Save game}
+            callback {int32_t writeGame(void);
+writeGame();}
+            xywh {0 0 100 20}
+          }
+          MenuItem {} {
+            label {Load game}
+            callback {int32_t readGame(void);
+readGame();}
+            xywh {0 0 100 20} divider
+          }
+          MenuItem {} {
+            label {&New game}
+            callback {void ResetGame();
+if(fl_choice("Confirm start new game?", "No", "Yes", NULL)==1) {
+ResetGame();
+}}
+            xywh {0 0 100 20}
+          }
+          MenuItem {} {
+            label {Setup position}
+            callback {void setupGameInit();
+void ResetGame();
+if(fl_choice("Confirm set up a new position?", "No", "Yes", NULL)==1) {
+setupGameInit();// store values for any cancel
+void setMouseMode (int32_t val);
+setMouseMode(1); // put to setup mode
+void setfltkplayer(int32_t player);
+printf("\\n **** ATTN COMP MOVES TURNED OFF******");
+ResetGame();
+setfltkplayer(2); // +2 to switch comp playing off
+colwh_mi->uncheck();
+colbl_mi->uncheck();
+colne_mi->uncheck();
+colbo_mi->check();
+setupWin->show();
+SideButton->deactivate();// problems if its changed
+}}
+            xywh {0 0 100 20}
+          }
+          MenuItem {} {
+            label {E&xit}
+            callback {void freeHashesAndOpenings();
+if(fl_choice("Really Quit?", "No", "Yes", NULL)==1) {
+freeHashesAndOpenings();
+exit(0);
+}}
+            xywh {0 0 100 20} divider
+          }
+        }
+        Fl_Menu_Button SideButton {
+          label {&Side} open
+          xywh {107 6 78 32}
+        } {
+          MenuItem colwh_mi {
+            label {Player: White}
+            callback {void setfltkplayer(int32_t player);
+setfltkplayer(1); // +1 for white
+colwh_mi->check();
+colbl_mi->uncheck();
+colne_mi->uncheck();
+colbo_mi->uncheck();
+cube->redraw();}
+            xywh {0 0 100 20} type Toggle value 1
+          }
+          MenuItem colbl_mi {
+            label {Player: Black}
+            callback {void setfltkplayer(int32_t player);
+setfltkplayer(-1); // -1 for black
+colwh_mi->uncheck();
+colbl_mi->check();
+colne_mi->uncheck();
+colbo_mi->uncheck();
+cube->redraw();}
+            xywh {0 0 100 20} type Toggle divider
+          }
+          MenuItem colne_mi {
+            label {Play neither (comp v comp)}
+            callback {void setfltkplayer(int32_t player);
+setfltkplayer(0); // o for neither player
+colwh_mi->uncheck();
+colbl_mi->uncheck();
+colbo_mi->uncheck();
+colne_mi->check();
+cube->redraw();}
+            xywh {0 0 100 20} type Toggle
+          }
+          MenuItem colbo_mi {
+            label {Play both (play-through)}
+            callback {void setfltkplayer(int32_t player);
+setfltkplayer(2);//2 for human as both players
+colwh_mi->uncheck();
+colbl_mi->uncheck();
+colne_mi->uncheck();
+colbo_mi->check();
+cube->redraw();}
+            tooltip {For playing through a game before handing over to the computer, using Side->} xywh {0 0 100 20} type Toggle
+          }
+        }
+        Fl_Menu_Button lvl_mi {
+          label {&Limit} open
+          tooltip {chooses the *computer's* limiting method (time or depth)} xywh {230 6 92 32}
+        } {
+          MenuItem fix_mi {
+            label {fixed search depth}
+            callback {//fix_mi->deactivate();av_mi->activate();tot_mi->activate();
+av_mi->uncheck(); tot_mi->uncheck();fix_mi->check();
+void setLimitmode(int32_t in);
+void setStrategy(int32_t in);
+setLimitmode(0);
+setStrategy(7);// keep on 7
+char weestr[40]; extern int32_t FLTKmaxDepth;
+sprintf(weestr,"%d",FLTKmaxDepth);
+tLimit_to->value(weestr);
+tLimit_to->label("- fixed move depth  ");}
+            tooltip {note e.g. 4 moves = 2 moves each side} xywh {0 0 100 20} type Toggle divider
+          }
+          MenuItem av_mi {
+            label {average time per move}
+            callback {//fix_mi->activate();av_mi->deactivate();tot_mi->activate();
+av_mi->check(); tot_mi->uncheck();fix_mi->uncheck();
+void setLimitmode(int32_t in);
+void setStrategy(int32_t in);
+setLimitmode(1);
+setStrategy(7);
+char weestr[40]; extern double FLTKavgMoveTime;
+sprintf(weestr,"%.1f",FLTKavgMoveTime);
+tLimit_to->value(weestr);
+tLimit_to->label("time per move (sec)");}
+            tooltip {computer aims for this time per move (on average)} xywh {0 0 100 20} type Toggle value 1 divider
+          }
+          MenuItem tot_mi {
+            label {total time for all moves}
+            callback {//fix_mi->activate();av_mi->activate();tot_mi->deactivate();
+
+av_mi->uncheck(); tot_mi->check();fix_mi->uncheck();
+void setLimitmode(int32_t in);
+void setStrategy(int32_t in);
+setLimitmode(2);
+setStrategy(7);
+char weestr[40]; extern double FLTKallMovesTime;
+sprintf(weestr,"%d",(int)FLTKallMovesTime);
+tLimit_to->value(weestr);
+tLimit_to->label("time for game (min)");}
+            tooltip {computer uses this time over a full game} xywh {0 0 100 20} type Toggle
+          }
+        }
+        Fl_Output tLimit_to {
+          label {sec per move } selected
+          xywh {355 14 56 18} color 52 labelsize 12 align 8 textsize 12
+          code0 {o->value("not set");}
+        }
+        Fl_Group {} {
+          label Computer open
+          xywh {649 46 274 237} box UP_BOX align 17
+        } {
+          Fl_Output cmpTot_to {
+            label {Total used (mins)}
+            xywh {824 109 70 22} box FLAT_BOX color 52 labelsize 10 align 129 textsize 12
+            code0 {o->value("0.0");}
+          }
+          Fl_Output cmpAv_to {
+            label {Average/move (sec)}
+            xywh {736 109 70 22} box FLAT_BOX color 52 labelsize 10 align 129 textsize 12
+            code0 {o->value("0.0");}
+          }
+          Fl_Output current_to {
+            label {last move (sec)}
+            xywh {655 109 70 22} color 52 labelsize 12 align 129
+            code0 {o->value("0.0");}
+          }
+          Fl_Output avdepth_to {
+            label {Average search depth}
+            xywh {736 169 70 22} box FLAT_BOX color 52 labelsize 10 align 129 textsize 12
+            code0 {o->value("0.0");}
+          }
+          Fl_Output coverage_to {
+            label {kilo-nodes per sec}
+            tooltip {number of positions evaluated per second} xywh {824 169 70 22} box FLAT_BOX color 52 labelsize 10 align 129 textsize 12
+            code0 {o->value("0.0");}
+          }
+          Fl_Output lastdepth_to {
+            label {Last search depth}
+            xywh {655 169 70 22} box FLAT_BOX color 52 labelsize 10 align 129 textsize 12
+            code0 {o->value("0");}
+          }
+          Fl_Output assessment_to {
+            label score
+            tooltip {evaluation in 'milli-pawns'} xywh {787 238 70 22} box FLAT_BOX color 52 labelsize 10 align 129 textsize 12
+            code0 {o->value("0");}
+          }
+          Fl_Output lastmove_to {
+            label {Last move}
+            xywh {662 213 118 64} box FLAT_BOX color 52 labelsize 10 align 129 textsize 18
+            code0 {o->value("--");}
+          }
+        }
+        Fl_Button {} {
+          label {+}
+          callback {void setLevel(int32_t in);
+setLevel(+1); // plus to increase
+
+double getValToShow(int*);
+int dOrf;
+double val = getValToShow(&dOrf);
+char weestr[40]; 
+if(dOrf >=0){ // proper double returned
+  if(val < 10.0)
+    sprintf(weestr,"%.2f",val);
+   else
+     sprintf(weestr,"%d",(int)val);
+  }
+else
+  sprintf(weestr,"%d",(int)val);
+tLimit_to->value(weestr);}
+          xywh {331 4 20 17} labelsize 16
+        }
+        Fl_Button {} {
+          label {-}
+          callback {void setLevel(int32_t in);
+setLevel(-1); // minus to decrease
+
+double getValToShow(int*);
+int dOrf;
+double val = getValToShow(&dOrf);
+char weestr[40]; 
+if(dOrf >=0){
+if(dOrf >=0){ // proper double returned
+  if(val < 10.0)
+    sprintf(weestr,"%.2f",val);
+   else
+     sprintf(weestr,"%d",(int)val);
+  }
+} // proper double returned
+else
+  sprintf(weestr,"%d",(int)val);
+tLimit_to->value(weestr);}
+          xywh {331 23 20 17} labelsize 16
+        }
+        Fl_Group {} {
+          label Player open
+          xywh {649 283 274 85} box UP_BOX align 17
+        } {
+          Fl_Output humAv_to {
+            label {Average/move (sec)}
+            xywh {735 334 70 24} box FLAT_BOX color 52 labelsize 10 align 129 textsize 12
+            code0 {o->value("0.0");}
+          }
+          Fl_Output humTot_to {
+            label {Total used (mins)}
+            xywh {824 334 70 22} box FLAT_BOX color 52 labelsize 10 align 129 textsize 12
+            code0 {o->value("0.0");}
+          }
+        }
+        Fl_Output bestline_to {
+          label {output:}
+          xywh {5 683 915 22} color 49 labelcolor 255 textsize 10
+          code0 {o->value("-");}
+        }
+        Fl_Menu_Button {} {
+          label {&Window} open
+          xywh {555 6 90 32}
+        } {
+          MenuItem lt_mi {
+            label {Laptop size (780 x 535)}
+            callback {mainWindow->fullscreen_off();
+mainWindow->resize(50,50,780,535);
+lt_mi->check();
+dt_mi->uncheck();
+fs_mi->uncheck();}
+            xywh {0 0 100 20} type Toggle
+          }
+          MenuItem dt_mi {
+            label {Desktop size (929 x 710)}
+            callback {mainWindow->fullscreen_off();
+mainWindow->resize(50,50,929,710);
+lt_mi->uncheck();
+fs_mi->uncheck();
+dt_mi->check();}
+            xywh {0 0 100 20} type Toggle value 1
+          }
+          MenuItem fs_mi {
+            label {Full screen}
+            callback {mainWindow->fullscreen();
+fs_mi->check();
+lt_mi->uncheck();
+dt_mi->uncheck();}
+            xywh {0 0 100 20} type Toggle
+          }
+        }
+      }
+    }
+    Fl_Window setupWin {
+      label {Set up position} open
+      xywh {74 461 480 320} type Double visible
+    } {
+      Fl_Button {} {
+        label {Cancel set-up}
+        callback {void cancelSetup();
+void setfltkplayer(int32_t player);
+cancelSetup();// reads (main) old values
+setupWin->hide();// hide window again
+// potential bug below as may heve been black previously
+setfltkplayer(1); // set player back to white
+void setMouseMode (int32_t val);
+setMouseMode(0); // back to normal mouse
+SideButton->activate();}
+        xywh {367 283 100 22}
+      }
+      Fl_Check_Button wnextbut {
+        label {White to play next}
+        callback {bnextbut->value(0);
+wnextbut->value(1);}
+        xywh {47 199 157 24} down_box DOWN_BOX value 1
+      }
+      Fl_Check_Button bnextbut {
+        label {Black to play next}
+        callback {bnextbut->value(1);
+wnextbut->value(0);}
+        xywh {261 199 157 24} down_box DOWN_BOX
+      }
+      Fl_Button {} {
+        label Start
+        callback {void setNextPlayer(uint32_t);
+setupWin->hide();// hide window again
+if(wnextbut->value() ==1){
+  fl_message("White to play next, with you (currently) set to play Both sides.\\n - Change with Side>Player: Black, for computer to play as white.\\n - - Can increase time and use Takeback for deeper search.");
+  setNextPlayer(1);
+  }
+else {
+      fl_message("Black to play next, with you (currently) set to play Both sides.\\n - Change with Side > Player: White, for computer to play as black.\\n - - Can increase time and use Takeback for deeper search.");
+      setNextPlayer(-1);
+  }
+ // set correct tick (human plays both)
+ void setMouseMode (int32_t val);
+ setMouseMode(0); // normal mouse input
+ SideButton->activate();
+ void resetAfterSetup(void);
+ resetAfterSetup(); // zero times and nodeCount}
+        xywh {140 278 64 22}
+      }
+      Fl_Group {} {open
+        xywh {15 9 440 172} box UP_BOX
+      } {}
+      Fl_Output {} {
+        xywh {24 43 423 24} box FLAT_BOX color 49 labelsize 12
+        code0 {o->value("Drag pieces with left mouse to move,");}
+      }
+      Fl_Output {} {
+        xywh {24 15 423 24} box FLAT_BOX color 49 labelsize 12
+        code0 {o->value("To set up position:");}
+      }
+      Fl_Output {} {
+        xywh {24 75 423 24} box FLAT_BOX color 49 labelsize 12
+        code0 {o->value(" click with right mouse button to remove,");}
+      }
+      Fl_Output {} {
+        xywh {24 105 423 24} box FLAT_BOX color 49 labelsize 12
+        code0 {o->value(" click with middle mouse button to undo last removal.");}
+      }
+      Fl_Output {} {
+        xywh {19 150 423 24} box FLAT_BOX color 49 labelsize 12
+        code0 {o->value(" Then select which colour to play next, and click Start.");}
+      }
+    }
+  }
+  Function {show(int argc, char **argv)} {open
+  } {
+    code {mainWindow->show(argc, argv);} {}
+  }
+}
